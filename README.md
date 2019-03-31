@@ -1,2 +1,2 @@
 # cpp
-cpp codes and projects
+Cpp codes and projects from Codecademy, Learncpp.
