@@ -1,9 +1,11 @@
-Given a NxM (NxM <= 1e5) matrix with each cell having a value mod(Aij) <= 1e9. Job is to rank each element by the following rules:
+Given a 2D matrix M having integer elements in the range [-10^9, 10^9]. You need to rank each element by the following rules.
 
 1) Ranks start from 1.
 2) Equal elements in the same row or same column should have the same rank.
 3) Greater elements in the same row or same column should have a greater rank.
+4) Lesser elements in the same row or same column should have a lesser rank.
 4) Maximum Rank should be minimized.
+
 Print the final rank matrix.
 
 Solution:
