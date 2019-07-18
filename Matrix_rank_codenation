@@ -1,0 +1,49 @@
+Given a NxM (NxM <= 1e5) matrix with each cell having a value mod(Aij) <= 1e9. Job is to rank each element by the following rules:
+
+1) Ranks start from 1.
+2) Equal elements in the same row or same column should have the same rank.
+3) Greater elements in the same row or same column should have a greater rank.
+4) Maximum Rank should be minimized.
+Print the final rank matrix.
+
+Solution:
+
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+int n,m;
+scanf("%d %d",&m,&n);
+printf("Input matrix:\n");
+vector< vector<int> > v(m, vector<int> (n,0));
+set<int> myset;
+vector< set<int> > row(m, myset);
+vector< set<int> > col(n, myset);
+for(int i =0;i<m;i++)
+{
+	for(int j =0;j<n;j++)
+	{
+			scanf("%d",&v[i][j]);
+      row[i].insert(v[i][j]);
+      col[j].insert(v[i][j]);
+	}
+}
+
+for(int i =0;i<m;i++)
+{
+	for(int j = 0;j<n;j++)
+	{
+		 v[i][j] = 1 + max( distance(row[i].begin(), row[i].find(v[i][j])), distance(col[j].begin(), col[j].find(v[i][j])) );
+	}
+}
+printf("Resultant matrix:\n");
+for(int i =0;i<m;i++)
+{
+	for(int j = 0;j<n;j++)
+	{
+			cout<<v[i][j]<<" ";
+	}
+	cout<<"\n";
+}
+return 0;
+}
