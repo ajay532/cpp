@@ -13,6 +13,7 @@ using namespace std;
 #define eb emplace_back
 #define mp make_pair
 
+  // intialize each vertex as individual set.
 void make_set(vi &arr)
 {
   loop(i,0,arr.size())
@@ -20,6 +21,9 @@ void make_set(vi &arr)
     arr[i] = i;
   }
 }
+  // Finding if parent is same as vertex , we also applied path compression
+  // find_set work like tree child-parent-grandparent to find
+  // vertex set
 int find_set(vi &arr, int a)
 {
   while(arr[a]!=a)
@@ -29,6 +33,11 @@ int find_set(vi &arr, int a)
   }
   return a;
 }
+  // unioun to merge two vertex in same set, unioun first compare both sets
+  // by find_set we will find exact set, if not same set, merge both set.
+  // by making parent of one vertex as others.
+  // I didn't apply merge by rank, which works as merge a lighter set to heavy
+  // set so to reduce time
 void union_set(vi &arr, int a, int b)
 {
   int seta = find_set(arr, a);
@@ -57,12 +66,12 @@ bool mysort2(pi a, pi b)
   return true;
   return false;
 }
-
+    // kruskal algorithm
 void kruskal(auto &edge_list, int n)
 {
-  sort(edge_list.begin(),edge_list.end(),mysort);
-  vi arr(n,0);
-  make_set(arr);
+  sort(edge_list.begin(),edge_list.end(),mysort);  // sorting edges by weight
+  vi arr(n,0); // declaring parent set
+  make_set(arr);  // initialize each set
   int min_cost = 0;
   int m = edge_list.size();
   cout<<"\nkruskal edge order:\n";
@@ -75,78 +84,46 @@ void kruskal(auto &edge_list, int n)
       union_set(arr,a,b);
       min_cost += w;
       cout<<w<<": "<<a<<", "<<b<<"\n";
-      // count++;
-      // if(count==n/2)
     }
   }
-  cout<<"kruskal cost is:"<<min_cost;
+  cout<<"MST cost with kruskal is:"<<min_cost;
 }
 
-void prims(auto &adj_list, int n)
-{
-  vector<bool> inmst(n,false);
-  vi parent(n,0);
-  loop(i,0,n)
-  parent[i] = i;
-  vi value(n,INT_MAX);
-  value[0]=0;
-  //priority_queue <pi, vii, mysort2> minkey(keys.begin(),keys.end());
-  int min_cost = 0;
-  loop(i,0,n)
+  // prims algorithm
+  void prims(auto &adj_list)
   {
-    //finding minimum keys
-    int minkey = INT_MAX;
-    int minkeyindex = -1;
-    loop(j,0,n)
+    int n = adj_list.size();
+    vi visited(n,0); // storing values of each vertex, visited or not.
+    priority_queue<pi> pq;
+    pq.push(mp(-0,-0));  // pushing (weight, vertex).
+    int min_cost = 0;
+    cout<<"Prims vertex order\n";
+    while(!pq.empty())
     {
-      if(!inmst[j] && value[j]<minkey)
+      pi u = pq.top(); pq.pop();
+      if(visited[-u.S])  // important
+      continue;
+      min_cost +=-u.F;
+      cout<<"vertex is "<<-u.S<<", min_cost is:"<<min_cost<<"\n";
+      visited[-u.S] = 1;
+      for(auto v:adj_list[-u.S])
       {
-        minkey = value[j];
-        minkeyindex = j;
+        if(!visited[v.S])
+        {
+          pq.push(mp(-v.F,-v.S));
+        }
       }
     }
-    inmst[minkeyindex] = true;
-    if(i!=0)
-    min_cost = adj_list[minkeyindex].;
-    for(auto j: adj_list[minkeyindex])
-    {
-      if(!inmst[j.F] && value[minkeyindex] + j.S < value[j.F])
-      {
-      value[j.F] = value[minkeyindex] + j.S;
-      parent[j.F] = minkeyindex;
-      }
-    }
-    cout<<"minkey = "<<minkeyindex<<"\n";
-    loop(j,0,n)
-    cout<<value[j]<<" ";
-    cout<<"\n";
+    cout<<"MST cost with prims is:"<<min_cost<<"\n";
   }
-  //printing nodes
-  cout<<"prims, edges traversed are in this order\n";
-  loop(i,1,n)
-  cout<<"("<<i<<", "<<parent[i]<<") ";
-  cout<<"prims min cost is\n";
-  cout<<min_cost;
-
-}
 
 int main()
 {
-  int n, m,a,b,w;
-  n = 5,m=7;
-  cout<<"Graph problems\n";
-  // cout<<"enter nodes and edges count\n";
-  // cin>>n>>m;
-  // vii v;
-  // vector< vector< pair<int,int> > > adj_list(n,v);
-  // cout<<"enter m edges";
-  // loop(i,0,m)
-  // {
-  //   cin>>a>>b;
-  //   adj_list[a].pb(mp(b,0));
-  //   adj_list[b].pb(mp(a,0));
-  // }
-  vector< vector< pair<int,int> > > adj_list = { {mp(1,1),mp(2,7)}, {mp(0,1),mp(2,5),mp(3,4),mp(4,3)}, {mp(0,7),mp(1,5),mp(4,6)}, {mp(1,4),mp(4,2)}, {mp(1,3),mp(2,6),mp(3,2)}};
+  int n,m;
+  n = 5,m=7; // n vertex and m edges;
+  cout<<"MST graph problems\n";
+  // adj_list store u:(w,v);
+  vector< vector< pi> > adj_list = { {mp(1,1),mp(7,2)}, {mp(1,0),mp(5,2),mp(4,3),mp(3,4)}, {mp(7,0),mp(5,1),mp(6,4)}, {mp(4,1),mp(2,4)}, {mp(3,1),mp(6,2),mp(2,3)}};
   cout<<"Given adjacency list:\n";
   int cnt =0;
   for(auto i: adj_list)
@@ -158,30 +135,20 @@ int main()
     }
     cout<<"\n";
   }
+  // edge list:  w,(u,v)
   vector< pair<int,pair<int,int> > >  edge_list;
   for(int i =0;i<adj_list.size();i++)
   {
     for(auto j: adj_list[i])
     {
-      edge_list.pb( mp( j.S, mp(i,j.F)) );
+      edge_list.pb( mp( j.F, mp(i,j.S)) );
     }
   }
-  // cout<<"Given edge list:\n";
-  // for(auto i: edge_list)
-  // {
-  //     cout<<"["<<i.F<<" ("<<(i.S).F<<", "<<(i.S).S<<")] ";
-  // }
-  // // sort all edges by weight
-  // sort(edge_list.begin(),edge_list.end(),mysort);
-  // cout<<"Given edge list after sorting:\n";
-  // for(auto i: edge_list)
-  // {
-  //     cout<<"["<<i.F<<" ("<<(i.S).F<<", "<<(i.S).S<<")] ";
-  // }
+
   //Kruskal algorithm
   kruskal(edge_list, n);
-  cout<<"\n";
-  prims(adj_list,n);
+  cout<<"\n\n";
+  prims(adj_list);
   cout<<"\n";
   return 0;
 }
