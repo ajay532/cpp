@@ -1,0 +1,55 @@
+#include <iostream>
+#define ll long long int
+using namespace std;
+bool check(ll n, ll k)
+{
+    ll total = n;
+    cout<<"\nfor k ="<<k<<"\n";
+    ll sum =0;
+    ll turn =1;
+    while(sum<(total/2) && n>=10 )
+    {
+        if(turn%2==1)
+            {
+                sum+=k;
+                n-=k;
+                cout<<sum<<" "<<n<<"\n";
+            }
+        else
+        {
+            if(n>=10)
+                n-=n/10;
+        }
+        
+        turn++;
+         
+    }
+    if(n<10)
+        sum+=n;
+    cout<<sum<<" "<<n<<"\n";
+    if(sum>=total/2)
+        return true;
+    return false;
+}
+int main() {
+    ll n,k=0;
+    cin>>n;
+    ll l = 1,r=n, mid;
+    while(l<r)
+    {
+        mid = (l+r)/2;
+        if(check(n,mid))
+            {
+                k = mid;
+                r = mid-1;
+            }
+        else
+            {
+                l = mid+1;
+            }
+            
+    }
+    
+    cout<<"k="<<k<<"\n";
+    return 0;
+}
